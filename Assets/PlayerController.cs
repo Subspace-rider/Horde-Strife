@@ -3,13 +3,15 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     #region private variables
-    private float moveSpeed = 180f;
+    private float moveSpeed = 10f;
     private float turnSpeed = 200f;
     private Rigidbody2D playerRB;
     private KeyCode leftKey = KeyCode.A;
     private KeyCode rightKey = KeyCode.D;
     private KeyCode upKey = KeyCode.W;
     private KeyCode downKey = KeyCode.S;
+    private Vector3 movementInput;
+    private Camera mainCamera;
     #endregion
     public Transform firePoint;
     public GameObject bulletPrefab;
@@ -17,11 +19,40 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         playerRB = GetComponent<Rigidbody2D>();
+
+        mainCamera = Camera.main;
     }
 
     // Update is called once per frame
     void Update()
     {
+        #region camera based movement
+        float moveX = 0f;
+        float moveY = 0f;
+
+        if (Input.GetKey(upKey)) moveY += 1f;
+        if (Input.GetKey(downKey)) moveY -= 1f;
+        if (Input.GetKey(leftKey)) moveX -= 1f;
+        if (Input.GetKey(rightKey)) moveX += 1f;
+
+        Vector2 rawInput = new Vector2(moveX, moveY).normalized;
+
+        if (mainCamera != null)
+        {
+            
+            Vector3 camRight = mainCamera.transform.right;
+            Vector3 camUp = mainCamera.transform.up;
+
+            
+            movementInput = (camRight * rawInput.x + camUp * rawInput.y);
+        }
+        else
+        {
+            movementInput = rawInput;
+        }
+
+        #endregion
+
         if(Input.GetKey(KeyCode.LeftArrow))
         {
             transform.Rotate(Vector3.forward * turnSpeed * Time.deltaTime);
@@ -45,24 +76,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         #region Movement
-        Vector3 myInput = Vector3.zero;
-
-        if(Input.GetKey(leftKey))
-        {
-            myInput = myInput + Vector3.left;
-        }
-        if(Input.GetKey(rightKey))
-        {
-            myInput = myInput + Vector3.right;
-        }
-        if(Input.GetKey(upKey))
-        {
-            myInput = myInput + Vector3.up;
-        }
-        if(Input.GetKey(downKey))
-        {
-            myInput = myInput + Vector3.down;
-        }
+        
 
         if(Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
@@ -70,7 +84,7 @@ public class PlayerController : MonoBehaviour
         }
         
 
-        playerRB.AddForce(myInput*moveSpeed*Time.fixedDeltaTime);
+        playerRB.linearVelocity = movementInput * moveSpeed;
         #endregion
     }
 }
