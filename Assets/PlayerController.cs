@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -6,6 +7,7 @@ public class PlayerController : MonoBehaviour
     private float moveSpeed = 10f;
     private float turnSpeed = 200f;
     private Rigidbody2D playerRB;
+    //private bool isKnockedBack;
     private KeyCode leftKey = KeyCode.A;
     private KeyCode rightKey = KeyCode.D;
     private KeyCode upKey = KeyCode.W;
@@ -26,6 +28,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //if(isKnockedBack) return;
         #region camera based movement
         float moveX = 0f;
         float moveY = 0f;
@@ -66,13 +69,15 @@ public class PlayerController : MonoBehaviour
         {
             Shoot();
         }
-
+        
     }
 
     void Shoot()
     {
         Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
     }
+    
+    
     void FixedUpdate()
     {
         #region Movement

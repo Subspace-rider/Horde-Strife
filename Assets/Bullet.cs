@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    //private int hitCount = 0;
     private float speed = 20f;
     private float lifetime = 3f;
     private Rigidbody2D bulletRB;
@@ -17,7 +18,12 @@ public class Bullet : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if(collision.CompareTag("Enemy") || collision.CompareTag("Ground"))
+        if(collision.CompareTag("Enemy"))
+        {
+            
+            Destroy(gameObject);
+        }
+        if(collision.CompareTag("Ground"))
         {
             Destroy(gameObject);
         }
